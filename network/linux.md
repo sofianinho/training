@@ -38,7 +38,7 @@ calipso_cache_enable       icmp                    ip6frag_secret_interval  neig
 ```
 You can disable the IPv6 protocol on the whole system, by putting 1 in the file `/proc/sys/net/ipv6/conf/all/disable_ipv6` 
 
-### The /sys filesystemi (sysfs)
+### The /sys filesystem (sysfs)
 It is an interface to the kernel and contains information about hardware, network interfaces, bus ...etc. More formally:
 ```
 From: https://www.kernel.org/doc/Documentation/filesystems/sysfs.txt
@@ -47,5 +47,5 @@ sysfs is a ram-based filesystem initially based on ramfs. It provides
 a means to export kernel data structures, their attributes, and the 
 linkages between them to userspace.
 ```
-The networking part of this filesystem is under `/sys/class/net` where you find information about your interfaces: wireless or not, driver used, mtu, up or down ?...
-These information are  presented in user friendly way by tools like `ifconfig` and `ip addr`
+The networking part of this filesystem is under `/sys/class/net` where you find information about your interfaces: wireless or not, driver used, mtu, up or down ...
+This information is presented in user friendly way by tools like `ifconfig` and `ip addr`
