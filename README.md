@@ -14,3 +14,9 @@ Some of the training I give at my courses
 
 - [Les réseaux by Guy Pujolle](https://www.eyrolles.com/Informatique/Livre/les-reseaux-9782212138528)
 - [LTE et les réseaux 4G by Eric Hardouin, Yannick Bouguen, François-Xavier Wolff](https://www.amazon.fr/LTE-r%C3%A9seaux-4G-Eric-Hardouin/dp/2212129904)
+
+### Python and networking
+- [Mastering Python Networking by Eric Chou (English)](https://www.packtpub.com/networking-and-servers/mastering-python-networking)
+
+### Linux Networking
+- [TCP/IP Network Administration: Help for Unix System Administrator by Craig Hunt (English)](http://shop.oreilly.com/product/9780596002978.do)
