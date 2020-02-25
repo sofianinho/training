@@ -20,3 +20,7 @@ Some of the training I give at my courses
 
 ### Linux Networking
 - [TCP/IP Network Administration: Help for Unix System Administrator by Craig Hunt (English)](http://shop.oreilly.com/product/9780596002978.do)
+
+### IoT
+- [TinyML: Machine Learning with TensorFlow Lite on Arduino and Ultra-Low-Power Microcontrollers by Pete Warden and Daniel Situnayake (O'Reilly)](https://www.amazon.com/TinyML-Learning-TensorFlow-Ultra-Low-Power-Microcontrollers/dp/1492052043)
+- [Beginners Guide To The MQTT Protocol](http://www.steves-internet-guide.com/mqtt/)
