@@ -24,3 +24,4 @@ Some of the training I give at my courses
 ### IoT
 - [TinyML: Machine Learning with TensorFlow Lite on Arduino and Ultra-Low-Power Microcontrollers by Pete Warden and Daniel Situnayake (O'Reilly)](https://www.amazon.com/TinyML-Learning-TensorFlow-Ultra-Low-Power-Microcontrollers/dp/1492052043)
 - [Beginners Guide To The MQTT Protocol](http://www.steves-internet-guide.com/mqtt/)
+- [Awesome IoT](https://github.com/phodal/awesome-iot)
