@@ -104,18 +104,32 @@ echo $RANDOM
 - Subscribe to the topic you created before. Have you received that message ? why ?
 - Let's publish another random value. What happened at the susbscriber side.
 - Let's stop the broker. What happened to previous connections ? what if a new connection is attempted.
+- Restart the broker with the `-v` switch in your command line. Replay the scenario of before and see the logs.
+- What happens after one minute in the logs of the broker ? can you explain using the MQTT protocol ? how do I set a personalized value for this paramet ? (say 2 minutes). What are the consequences of this behavious on battery constrained devices ?
 
 
 ### Observe the packets
 
 `Action`
 
-Let's redo the previous actions with the mosquitto programs and observe what happened with wireshark (also tshark or tcpdump to save power in you raspberrypi)
+Let's redo the previous actions with the mosquitto programs and observe what happened with wireshark (also tshark or tcpdump to save cpu power in you raspberrypi)
 
+- Find the different section of the packets we discussed in the course: type, DUP flag, QoS level, content
+- Set the QoS levels differently in the publisher and watch the difference in the packets
 
 ### Setup of basic auth and more
 
-### Installing a mobile application for MQTT
+`Action`
+- Create two users with creadentials in a file named `users.txt`. Use this file in you configuration.
+- Try to connect like you did previously. Does it work ? what is the purpose of the parameter `allow_anonymous` in the file and what is the default value of that.
+- Use the `mosquitto_passwd` tool to hash your users.txt file and use it again. Any difference ?
+- How do I see the logs of my program ? where is the default location ? 
+- All my logs start with this `1582912839:` what does it mean ? how do I change it to something human-readable ?
+
+### [OPTIONAL] Setting up a secure communication for our setup using certificates
+
+
+### [OPTIONAL] Installing a mobile application for MQTT
 
 ## Writing our client program
 
