@@ -106,6 +106,7 @@ echo $RANDOM
 - Let's stop the broker. What happened to previous connections ? what if a new connection is attempted.
 - Restart the broker with the `-v` switch in your command line. Replay the scenario of before and see the logs.
 - What happens after one minute in the logs of the broker ? can you explain using the MQTT protocol ? how do I set a personalized value for this paramet ? (say 2 minutes). What are the consequences of this behavious on battery constrained devices ?
+- What is the difference at the broker side (in the logs) when we publish messages with different QoS levels ?
 
 
 ### Observe the packets
