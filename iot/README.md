@@ -133,7 +133,7 @@ This image is a good sumary of the infrastructure we are building in this tutori
 
 ![TLS](./tls.png)
 
-`Credits: https://mcuoneclipse.com/2017/04/14/enable-secure-communication-with-tls-and-the-mosquitto-broker/`
+`Credits:` [Erich Styger, "Enable Secure Communication with TLS and the Mosquitto Broker"](https://mcuoneclipse.com/2017/04/14/enable-secure-communication-with-tls-and-the-mosquitto-broker/)
 
 - Create your Certification Authority (CA):
 You will use `openssl` to create an RSA key of 2048 bits with DES3 ciphering. Choose a pass phrase for your CA and remember it
