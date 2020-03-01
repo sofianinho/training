@@ -131,7 +131,7 @@ Let's redo the previous actions with the mosquitto programs and observe what hap
 
 This image is a good sumary of the infrastructure we are building in this tutorial:
 
-![TLS](./tls.png)
+![TLS](./images/tls.png)
 
 `Credits:` [Erich Styger, "Enable Secure Communication with TLS and the Mosquitto Broker"](https://mcuoneclipse.com/2017/04/14/enable-secure-communication-with-tls-and-the-mosquitto-broker/)
 
@@ -299,6 +299,12 @@ SSL-Session:
 closed
 ```
 ### [OPTIONAL] Installing a mobile application for MQTT
+
+In this step, you will install an mqtt client application to connect to your broker and send messages or subscribe to topics. There are several application on the Play store, and you can even create your own. I am using the `MyMQTT` app for its simplicity, you can choose otherwise as the principle stays the same
+
+![screenshots](./images/screenshots.png)
+
+In the above screenshots you can see that we connected to the broker in the same WiFi network. You can also monitor your broker for confirmation of the connection (not shown here). In the center of the image, we can see all the functionnalities of our application. I am choosing to publish a message through the dedicated menu. Notice that you can also choose to duplicate the messages sent from the app. There is also the possibility to subscribe to different topics on the broker and see the messages arrive in the dashboard menu of the app.
 
 ## Writing our client program
 
