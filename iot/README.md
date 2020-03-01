@@ -298,8 +298,6 @@ SSL-Session:
 
 closed
 ```
-
-
 ### [OPTIONAL] Installing a mobile application for MQTT
 
 ## Writing our client program
@@ -311,6 +309,8 @@ closed
 ### Last will, reconnection, persistance
 
 ### Setting up options for QoS 1 and QoS 2
+
+### [OPTIONAL] Securing our communications with the broker
 
 ## Using the kit
 
