@@ -129,6 +129,12 @@ Let's redo the previous actions with the mosquitto programs and observe what hap
 
 ### [OPTIONAL] Setting up a secure communication for our setup using certificates
 
+This image is a good sumary of the infrastructure we are building in this tutorial:
+
+![TLS](./tls.png)
+
+`Credits: https://mcuoneclipse.com/2017/04/14/enable-secure-communication-with-tls-and-the-mosquitto-broker/`
+
 - Create your Certification Authority (CA):
 You will use `openssl` to create an RSA key of 2048 bits with DES3 ciphering. Choose a pass phrase for your CA and remember it
 ```
