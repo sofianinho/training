@@ -129,6 +129,170 @@ Let's redo the previous actions with the mosquitto programs and observe what hap
 
 ### [OPTIONAL] Setting up a secure communication for our setup using certificates
 
+- Create your Certification Authority (CA):
+You will use `openssl` to create an RSA key of 2048 bits with DES3 ciphering. Choose a pass phrase for your CA and remember it
+```
+openssl genrsa -des3 -out ca.key 2048
+```
+- Create a certificate for you CA, using the key from step 1:
+This command creates an X509 self-signed certificate that lasts 10 years (3650 days) using our key (with the password). 
+```
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+```
+You will be asked to enter a certain number of info on the certificate. This is an example input (note that my machine's name is `dev`. You can put your own hostname there):
+```
+Country Name (2 letter code) [AU]:FR
+State or Province Name (full name) [Some-State]:France
+Locality Name (eg, city) []:Paris
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Orange
+Organizational Unit Name (eg, section) []:IT
+Common Name (e.g. server FQDN or YOUR name) []:dev
+Email Address []:dev@mydomain.com
+```
+- Create a private key for the server:
+This private key is not password protected. You can choose to protect it with a password, which you should enter when starting the broker.
+```
+openssl genrsa -out srv.key 2048
+```
+- Certify this private server key in 2 steps:
+    - Step 1: the signing request
+    Pro tip: do not use the same info as in the previous certificate generation. See example intputs below the command.
+    ```
+    openssl req -new -out srv.csr -key srv.key
+    ```
+    Example inputs in the certificate request. Note that my machine's name is `dev`. You can put your own hostname there.
+    ```
+    Country Name (2 letter code) [AU]:FR
+    State or Province Name (full name) [Some-State]:France
+    Locality Name (eg, city) []:Paris
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Esiee
+    Organizational Unit Name (eg, section) []:R&D
+    Common Name (e.g. server FQDN or YOUR name) []:dev
+    Email Address []:dev@mydomain.com
+
+    Please enter the following 'extra' attributes
+    to be sent with your certificate request
+    A challenge password []:spring
+    An optional company name []:Esiee 
+    ```
+    - Step 2: Sign the server request using our CA
+    You will be asked to re-enter the password for the certificate you created in step 1
+    ```
+    openssl x509 -req -in srv.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out srv.crt -days 3650
+    ```
+You should be having 6 files by now:
+```
+-rw-r--r-- 1 sofiane sofiane 1,4K mars   1 12:08 ca.crt # CA Certificate
+-rw------- 1 sofiane sofiane 1,8K mars   1 12:05 ca.key # CA key pair (private, public)
+-rw-r--r-- 1 sofiane sofiane   41 mars   1 12:19 ca.srl # CA serial number file
+-rw-r--r-- 1 sofiane sofiane 1,3K mars   1 12:19 srv.crt # server certificate
+-rw-r--r-- 1 sofiane sofiane 1,1K mars   1 12:16 srv.csr # certificate sign request, not needed any more
+-rw------- 1 sofiane sofiane 1,7K mars   1 12:11 srv.key # server key pair
+``` 
+To start a broker you'll need the following files: `ca.crt`, `srv.crt`, and `srv.key`. You can create a `certs` folder for them. We will point to this folder later in our mosquitto.conf file
+To start a client (publsher, subscriber) you'll need the following file: `ca.crt`. You can put it inside `clients` folder.
+
+- Using our certificates and keys in practice
+    - The minimal configuration file for our broker
+    ```
+    # Config file for mosquitto
+    
+    port 8883
+
+    cafile ./certs/ca.crt
+    certfile ./certs/srv.crt
+    keyfile ./certs/srv.key
+    tls_version tlsv1.2
+    ```
+    You can now start your broker: `mosquitto -v -c ./mosquitto.conf`
+    - Publish your first message as a client:
+    ```
+    # Publish
+    mosquitto_pub -h dev -p 8883 -t test -m $RANDOM --cafile ./clients/ca.crt --tls-version tlsv1.2
+    # Subscribe
+    mosquitto_sub -h dev -p 8883 -t test --cafile ./certs/ca.crt
+    ```
+
+
+`Pro tips and caution`
+- The two certificates that you create for the CA and Server must differ for this setup to work. I am entirely sure why (something that has to do with distinguishing the server and the signing authority ?). In practice, this means to follow recommendations from step 4.1
+- You may notice some errors when you try to connect with clients of type `Error: A TLS error occurred` or `1583062034: OpenSSL Error: error:14094438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error` on the broker. This may be due to the fact that you are using `localhost` or another IP address or hostname to reach your broker. Try using the option: `--insecure` at the end of your client command (or: `tls_insecure_set(True)` in paho) to disable the hostname check. If it works, try using the proper hostname (not the IP) that you associated with the certificate (`dev` in my case), this should allow you to remove the insecure flag which unaesthetic after all this effort.
+- You can set your own version of tls in the client and the broker. The default version in mosquitto 1.6 that I am using is v1.2 which means it's optional to specify it. If your server uses v1.1 however you have to specify that in the client as shown in the publish example
+- Test your broker configuration and certfications with openssl using this client command. Use it after you start the broker. Press enter to end the connection. The result below is only to show you an example of returned values.
+```
+$ openssl s_client -connect localhost:8883 -CAfile ./clients/ca.crt
+CONNECTED(00000003)
+Can't use SSL_get_servername
+depth=1 C = FR, ST = France, L = Paris, O = Orange, OU = IT, CN = dev, emailAddress = dev@mydomain.com
+verify return:1
+depth=0 C = FR, ST = France, L = Paris, O = Esiee, OU = R&D, CN = dev, emailAddress = dev@mydomain.com
+verify return:1
+---
+Certificate chain
+ 0 s:C = FR, ST = France, L = Paris, O = Esiee, OU = R&D, CN = dev, emailAddress = dev@mydomain.com
+   i:C = FR, ST = France, L = Paris, O = Orange, OU = IT, CN = dev, emailAddress = dev@mydomain.com
+ 1 s:C = FR, ST = France, L = Paris, O = Orange, OU = IT, CN = dev, emailAddress = dev@mydomain.com
+   i:C = FR, ST = France, L = Paris, O = Orange, OU = IT, CN = dev, emailAddress = dev@mydomain.com
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIDfTCCAmUCFEFPAx75lhjIq8P4kftvCshhWXN3MA0GCSqGSIb3DQEBCwUAMHsx
+CzAJBgNVBAYTAkZSMQ8wDQYDVQQIDAZGcmFuY2UxDjAMBgNVBAcMBVBhcmlzMQ8w
+...
+Gnn56tdKjYkIFPXjQIa5ZKdKCT4iWX21SotEvjpwRMcIDZhS9QkEhxZ4a3veF13u
++JST8YMlac+rO1lncR1N9YIvYZqxpq8W4Lia4D+3oEZN
+-----END CERTIFICATE-----
+subject=C = FR, ST = France, L = Paris, O = Esiee, OU = R&D, CN = dev, emailAddress = dev@mydomain.com
+
+issuer=C = FR, ST = France, L = Paris, O = Orange, OU = IT, CN = dev, emailAddress = dev@mydomain.com
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 2528 bytes and written 386 bytes
+Verification: OK
+---
+New, TLSv1.2, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES256-GCM-SHA384
+    Session-ID: 6CB189D6F4F307FCCD065B2DCB586ED5AA9F59AC1AFFDB4B7A4B757C5D9FBDB9
+    Session-ID-ctx: 
+    Master-Key: 36162C3283AF93A484B088E094FBDB2FC78FAD4313B04C518AB5F4151A356A71644B24887B3D79D5A0BE200F8DB407DF
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 7200 (seconds)
+    TLS session ticket:
+    0000 - 8b 96 00 ed a8 64 57 d0-ea 01 ca 5d 7e ae 54 64   .....dW....]~.Td
+    0010 - 2a f2 ac 69 d5 4b 7e 43-e4 e0 36 ae 49 b9 b2 19   *..i.K~C..6.I...
+    0020 - d3 3e 8c c3 e3 c2 46 6d-f2 93 bc 0b 94 d6 dd f1   .>....Fm........
+    0030 - 6b be e4 2d e5 cb fd fb-8b a9 ae 37 bd 1d 22 d0   k..-.......7..".
+    0040 - 49 ae cd 4a 8e 54 e9 2b-e9 b9 ac 37 a2 19 10 fa   I..J.T.+...7....
+    0050 - b7 20 3f e3 ba 9b 43 ce-b2 75 81 4a ff f4 b9 57   . ?...C..u.J...W
+    0060 - 7b 8b ae 0e ba d7 15 a6-73 c4 eb 35 11 b3 f1 21   {.......s..5...!
+    0070 - 85 1f d9 16 8e fa de 2b-2f c3 4f fe b0 28 25 47   .......+/.O..(%G
+    0080 - 40 8c f1 6d 95 c1 88 22-f6 5d a6 3f 44 85 c7 b3   @..m...".].?D...
+    0090 - 06 2c 91 2e ff 8e 4b 10-ef d7 63 af ad fb 81 fb   .,....K...c.....
+    00a0 - 1a fe de 3c d3 c9 8f 0a-18 ff c3 a2 d4 72 fa 14   ...<.........r..
+
+    Start Time: 1583063732
+    Timeout   : 7200 (sec)
+    Verify return code: 0 (ok)
+    Extended master secret: yes
+---
+
+closed
+```
+
 
 ### [OPTIONAL] Installing a mobile application for MQTT
 
