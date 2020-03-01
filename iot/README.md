@@ -33,8 +33,6 @@ sudo apt update -qq
 sudo apt upgrade -y
 # Install necessary packages
 for p in $(cat ./apt.txt); do sudo apt install $p; done
-# Install python3 libraries
-pip3 install -r requirements.txt
 ``` 
 - Test your installation
 
@@ -42,7 +40,6 @@ These commands should work
 
 ```
 mosquitto --help
-pip3 show paho-mqtt
 ``` 
 
 
@@ -308,20 +305,84 @@ In the above screenshots you can see that we connected to the broker in the same
 
 ## Writing our client program
 
+In this part of the tutorial, we will use the python3 `paho-mqtt` library we installed in the first part and create our own clients to publish and subscribe to the broker. This library has clients for different programming languages. We are only going to use `Python3`.
+
 ### Getting to know Paho 
 
-### Writing your publish and subscribe programs
+`Discover`
 
-### Last will, reconnection, persistance
+- The [documentation of the library](https://www.eclipse.org/paho/clients/python/docs/) shows the API of the library and the common examples of using Paho. Find the relevant examples and documentation 
+- Some code snippets have been put in the `snippets` folder 
+
+
+`Action`
+- Create you virtual environment and install the libraries there
+```
+# Virtual environment
+python3 -m venv pymqtt
+# Activate the environment
+source ./mqtt/bin/activate
+# Install python3 libraries
+pip3 install -r requirements.txt
+```
+
+### Writing your publish and subscribe programs
+`Action`
+- Start the mosquitto broker with a minimal and default configuration (i.e. no auth or certificates)
+- Write a small program that uses `argparse` and accepts default values that you can change for the broker address and port, a topic name, and a message to be sent
+- Write your first subscriber using the examples in the documentation. This program should be:
+    - capable of changing the connection options (address, port, topic) from the CLI
+    - shows the message that he receives from the broker (use mosquitto_pub to publish messages)
+    - loops forever and gracefully disconnects when you type CTRL+C on the keyboard
+- Write your first publish program with the same expectations as for the subscriber.
+
+### Last will and reconnection
+
+`Discover`
+- Make sure to have a look at slides that explain the last will and testament
+
+
+`Action`
+- Implement the option of last will as shown in the documentation
+- Implement a failure scenario where this message is sent.
+- Include the reconnection to the broker if something goes wrong in the client
+- Make use of this implementation by starting the broker after the clients
+
 
 ### Setting up options for QoS 1 and QoS 2
 
+`Discover`
+- See the summary of the QoS modes in MQTT and the algoithms they implement
+
+`Action`
+- Implement the QoS levels for your publisher messages
+- Watch the log in the broker and find the messages of each QoS level
+
 ### [OPTIONAL] Securing our communications with the broker
 
-## Using the kit
+`Action`
+- Use the previous certificates and keys generated during the TLS infrastructure step above. Use the configuration file that includes the TLS parameters and restart mosquitto
+- Update your publisher and subscriber to use the certificates to communicate with the broker
+
+## Using the arduino kit
+
+We will try to obtain a metric from the Arduino kit that we will update the broker with in the appropriate topic. You have to install the Arduino studio.
 
 ### See the examples given in the Arduino folder
 
+You can use one of the two examples in the Arduino folder, or try something else from the kit. You can even find inspiration from well known IoT hacking sites. 
+
+- Use the Arduino studio to write the code and upload it to the device
+
 ### Read the metrics from RPi
 
+- Use `serial` in python3 to read the metric from the device in the raspberry pi
+
 ### Integration
+
+- Write a full publisher program that takes a metric from the Arduino and sends it to the broker
+- Write a full sbscriber program that takes a turn on / off order from the broker and executes it on the Arduino
+
+## Device to Cloud
+
+This part is undefined to let you create whatever you want :-)
