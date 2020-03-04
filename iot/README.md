@@ -383,6 +383,36 @@ You can use one of the two examples in the Arduino folder, or try something else
 - Write a full publisher program that takes a metric from the Arduino and sends it to the broker
 - Write a full sbscriber program that takes a turn on / off order from the broker and executes it on the Arduino
 
+### [OPTIONAL] writing the Arduino code in golang
+
+The standard language that you use to interact with your Arduino is a subset of C++ (files with .ino extension). You can however use a different programming language.
+
+I propose in this part of the tutorial to use Golang with the [tinygo framework](https://tinygo.org/). We will first get familiar with the language through [the playground](https://play.tinygo.org/) and then install it on our machines to experiment with a real Arduino Uno board. For reference, [this link](https://create.arduino.cc/projecthub/alankrantas/tinygo-on-arduino-uno-an-introduction-6130f6) gives a good tutorial of the framework.
+
+`Action`
+
+- Get familiar with the Arduino playground environment anf the different boards that are proposed on the menu
+
+![playground](images/playground.png)
+
+- Play with the blinking LED example on the Arduino Uno emulated board to get familiar with the language
+- On your RaspberryPi or your machine, install [golang](https://golang.org/dl/) with the version between `1.11` and `1.13` (`1.14` is not supported by tinygo at the time of writing)
+- Follow the [instructions on the this installation guide](https://tinygo.org/getting-started/) for tinygo and  `AVR` (to support Arduino). Be careful to follow the instructions specific to your platform only (Linux for instance).
+- Plug your Arduino Uno to USB, and run the following test with a LED plugged to PIN 13:
+
+```
+tinygo flash -target=arduino -port=/dev/ttyACM0 examples/blinky1
+```
+This should make your LED blinks on the board.
+- Create the setup for 3 LEDs plugged on the Arduino and write you own code for blinking 3 LEDs using tinygo. One possible implementation for this part is in the `snippets` folder (feel free to tweak the light show at your convenience).
+
+`Discover`
+
+You can have a look at [this tutorial](https://github.com/solarwinds/tinygo-lessons) about  tinygo and its usage with Paho MQTT client for golang. In order to setup that properly you need to use an ESP8266 in combination with the code from `Lesson 5`
+
+
 ## Device to Cloud
 
 This part is undefined to let you create whatever you want :-)
+
+I am choosing for my course to focus on the [ThingsBoard](https://thingsboard.io/docs/getting-started-guides/what-is-thingsboard/) with the community edition for its complete solution that you can deploy on any cloud.
