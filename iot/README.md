@@ -370,9 +370,16 @@ We will try to obtain a metric from the Arduino kit that we will update the brok
 
 ### See the examples given in the Arduino folder
 
-You can use one of the two examples in the Arduino folder, or try something else from the kit. You can even find inspiration from well known IoT hacking sites. 
+You can use one of the the examples in the Arduino folder, or try something else from the kit. You can even find inspiration from well known IoT hacking sites. 
 
 - Use the Arduino studio to write the code and upload it to the device
+
+`Note:`
+
+The ESP8266 example requires the ESP8266 ESP-01 module or similar. You can aquire one, install it following the instructions 
+on the [official ESP8266 support project for Arduino](https://github.com/esp8266/Arduino), and play with the example. You should update the @IP address of the broker, the SSID of your WiFi access point, and the password before applying the code to your ESP, for the messaging to work. 
+
+There are two schematics: one for uploading the code, one for after. When you upload the code you have to unplug the power for your ESP, plug the GPIO0 to the GND, replug the power to put it in programming mode, upload from the IDE using the ESP8266 Generic board. Once the upload is finished you install the second schema by unplugging the power, plugging the GPIO0 to the resistor, and then put the power back. 
 
 ### Read the metrics from RPi
 
