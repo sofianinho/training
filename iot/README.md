@@ -322,6 +322,7 @@ In this part of the tutorial, we will use the python3 `paho-mqtt` library we ins
 python3 -m venv pymqtt
 # Activate the environment
 source ./pymqtt/bin/activate
+# On windows: pymqtt/scripts/activate
 # Install python3 libraries
 pip3 install -r requirements.txt
 ```
