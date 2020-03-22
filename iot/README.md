@@ -368,6 +368,12 @@ pip3 install -r requirements.txt
 
 We will try to obtain a metric from the Arduino kit that we will update the broker with in the appropriate topic. You have to install the Arduino studio.
 
+### Solution for online learning with no access to Arduino platform
+
+Ideally this part of the tutorial would be experimented on the Arduino platform with a starter kit containing LEDs, thermometers, and more. Given that access is not always possible there is a possible online solution in this case using [`Tinkercad things framework`](https://www.tinkercad.com/things)
+
+You can create an account, follow one or two tutorials, and start tinkering as you would with an actual Arduino.
+
 ### See the examples given in the Arduino folder
 
 You can use one of the the examples in the Arduino folder, or try something else from the kit. You can even find inspiration from well known IoT hacking sites. 
