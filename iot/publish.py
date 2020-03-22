@@ -14,6 +14,13 @@ parser.add_argument("--serial", "-s", default="/dev/ttyACM0", help="Serial path 
 
 args = parser.parse_args()
 
+
+# Callback for the CONNACK from the server
+def connect_callback(client, userdata, flags, reasonCode, properties):
+    print("Connected to server with code "+str(reasonCode))
+    pass
+
+
 # Define the callback for publication (something to do once it's done)
 def publish_callback(client,userdata,mid):
     print("All done publishing mid: ", mid)
@@ -24,11 +31,15 @@ def message_callback(client, userdata, msg):
     pass
 
 if __name__== "__main__" :
-    client = mqttc.Client("Lamp")
+    client = mqttc.Client("Thermometer")
+    client.on_connect = connect_callback
     client.on_publish = publish_callback
     client.on_message = message_callback
     # Auth
     # Last will and testament
+    client.username_pw_set("publisher", "password")
+
+    client.will_set("test","bye bye I guess...", qos=0,retain=True)
     client.connect(args.broker, args.port)
     payld = str(random.randint(1,100))
     # 3. Remove this line and the stop line and see if the QoS 1 and 2 are supported

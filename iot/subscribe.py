@@ -13,8 +13,9 @@ parser.add_argument("--serial", "-s", default="/dev/ttyACM0", help="Serial path 
 args = parser.parse_args()
 
 # Callback for the CONNACK from the server
-def connect_callback(client, userdata, rc):
+def connect_callback(client, userdata, flags, rc, properties=None):
     print("Connected to server with code "+str(rc))
+    pass
 
 # The callback for when a PUBLISH message is received from the server.
 def message_callback(client, userdata, msg):
@@ -27,7 +28,9 @@ if __name__== "__main__" :
     client.on_connect = connect_callback
     client.on_message = message_callback
     #Auth
-    client.connect(args.broker, args.port)
+    client.username_pw_set("name", "password")
+    
+    client.connect(args.broker, args.port, keepalive=120)
     client.subscribe(args.topic)
     try:
         client.loop_forever()
