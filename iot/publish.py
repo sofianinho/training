@@ -39,7 +39,7 @@ if __name__== "__main__" :
     # Last will and testament
     client.username_pw_set("publisher", "password")
 
-    client.will_set("test","bye bye I guess...", qos=0,retain=True)
+    client.will_set("emergency","everything is going to explode", qos=0,retain=True)
     client.connect(args.broker, args.port)
     payld = str(random.randint(1,100))
     # 3. Remove this line and the stop line and see if the QoS 1 and 2 are supported
