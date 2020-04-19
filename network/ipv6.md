@@ -2,6 +2,8 @@
 
 In this tutorial, we are going to learn the fundamentals of using IPv6 in our local area network with the Neighbor discovery protocol, and see the global deployment of the next generation of netwokring protocols.
 
+You can find the list of resources [in this link](https://www.notion.so/698c7c26f49d48a6aff765cfccdb279c?v=fbabcf4bfd384f929872a1bdacdd1721), or availaible as [a PDF here](./IPv6_tutorial_resources.pdf)
+
 ## Prerequisites:
 
 For this tutorial, we need to have a working `Linux (preferably debian-based)` virtual machine with 2 network interfaces.
