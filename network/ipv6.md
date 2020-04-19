@@ -54,12 +54,126 @@ This part you can do using your VM or your personnal computer for now. `Your box
     - Explain this one-liner scipt ?
 - Find your IPv6 configuration for this interface using the `ip -6` command
     - How many IPv6 addresses can you see ?
-    - Can you explain why ?
+    - What is the difference between the addresses ?
+    - Can you explain why we have multiple IPv6 addresses ?
 
 ## Fundamentals of the IPv6 protocol on Linux
 
+### The kernel configuration
+
+
+- Run the following commands:
+    ```
+    def_if=$(echo  $(ip route get 8.8.8.8|awk -F 'dev ' '{print $2}'|cut -d' ' -f1))
+    sysctl net.ipv6.conf.$def_if
+    ```
+    - Can you explain the two commands ?
+    - What did the sysctl command returned ?
+    - Run the command: `ls /proc/sys/net/ipv6/conf/$def_if`. What do you notice ?
+    - Explain the following parameters: `accept_ra`, `addr_gen_mode`, `disable_ipv6`, `hop_limit`, `forwarding`, `router_probe_interval`, `stable_secret`
+
+### IPv6 addressing
+
+- Run the following commands:
+    ```
+    def_if=$(echo  $(ip route get 8.8.8.8|awk -F 'dev ' '{print $2}'|cut -d' ' -f1))
+    sudo sysctl net.ipv6.conf.$def_if.disable_ipv6=1
+    ip addr show dev $def_if 
+    ```
+    - What happened ?
+
+- Now run the following commands: 
+    ```
+    sudo sysctl net.ipv6.conf.$def_if.disable_ipv6=0
+    ip addr show dev $def_if
+    ```
+    - What happened ?
+    - Explain the following terms: `valid_lft 86169sec preferred_lft 14169sec`,  `scope link`, `scope global`,  `stable-privacy (RFC 7217)`
+
+- What represent the following commands:
+    ```
+    ip -6 rule
+    ip -6 route show table local
+    ip -6 route show table main
+    ip -6 route
+    ip -6 neigh
+    ```
+    - _`Bonus`_  What is the effect of disabling IPv6 in your Internet Box ?
+        - Retrace the sequence of events and explain the protocol using these 4 elements (before and after disabling IPv6 in your router): `tcpdump -v -n -i $def_if`, `ip -6 route`, `ip addr show dev $def_if (focus on preferred_lft parameter)`, and `ip -6 neigh`
+
+- Use ping6 to ping your host (or your VM) machine on the local and gloal addresses.
+    - Were you able to ping the local address ? 
+        - If no, please explain why; otherwise what did you use on your ping6 command ?
+
 ## Neighbor Discovery protocol
+
+In this section, we are going to create a router advertisement configuration using RADVD program. 
+
+- Install radvd using `sudo apt update && sudo apt install radvd`
+- Suppose the name of your default outgoing interface in your machine is `eth0`, write the following content under the file `/etc/radvd.conf` (do not forget `sudo`):
+```
+interface eth0 
+{
+        AdvSendAdvert on;
+	    MaxRtrAdvInterval 10;
+        prefix 2001:db8:dead:abcd::/64
+        {
+                AdvOnLink on;
+                AdvAutonomous on;
+                AdvRouterAddr on;
+        };
+};
+```
+- Restart radvd using `systemctl restart radvd.service`
+- Use tcpdump to listen to the outgoing interface (here, eth0). Use the verbose mode of tcpdump.
+    - What did you see ?
+    - What is the content of the packet ?
+    - What is the frequency of the packet ? what parameter controls it ? If I wanted the message to be sent between 10s and 30s, what is the configuration ?
+    - Can I use this configuration file to announce 2 prefixes with the same interface ?
+    - What is the result of this radvd configuration in your network ? (see the configuration of your host machine or VM or your smartphone)
+- Analyse the content of the neighbors table.
 
 ## Scapy and IPv6
 
-## Security
+In this section we are going to forge our RA and NS messages using scapy.
+
+- Install scapy using pip3
+- Note the MAC address of the default egress interface, e.g. aa:bb:cc:dd:ee:ff 
+- Note the IPv6 address of your host machine (`IPv6a`), and that of your VM (`IPv6b`)
+
+### Router Advertisement
+
+- Start python3, and write the following commands:
+```
+from scapy.all import *
+v6 = IPv6(dst='ff02::1')
+v6.show()
+ra = ICMPv6ND_RA()
+ra.show()
+llopt = ICMPv6NDOptSrcLLAddr(lladdr="aa:bb:cc:dd:ee:ff")
+d = ICMPv6NDOptMTU() 
+e = ICMPv6NDOptPrefixInfo(prefixlen = 64, prefix = "123:b00c::")
+e.show()
+send(v6/ra/llopt/d/e)
+```
+    - Explain the steps of this program
+    - What have seen in tcpdump ? (do not hesitate to resend the message)
+    - What are the effects of this message on other machines in the network ?
+
+### Neighbor Sollicitation
+
+- Start python3 in your VM, and write the following commands:
+```
+from scapy.all import *
+a = IPv6(src="IPv6b", dst="IPv6a")
+b = ICMPv6ND_NS(tgt="IPv6b")
+c = ICMPv6NDOptSrcLLAddr(lladdr="aa:bb:cc:dd:ee:ff") 
+pkt = a / b / c
+send(pkt)
+```
+    - Explain the steps of this program
+    - What hav you seen in tcpdump ?
+    - Name 2 cases where neighbor sollicitation and advertisement are needed in IPv6 ?
+
+`Note about security`
+You can have a look at [Chiron - An IPv6 Security Assessment framework with advanced IPv6 Extension Headers manipulation capabilities. ](https://github.com/aatlasis/Chiron). This contains a full tutorial on IPv6 specific pentesting you can use to audit your IPv6 installation on your local network.
