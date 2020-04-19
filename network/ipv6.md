@@ -105,6 +105,10 @@ This part you can do using your VM or your personnal computer for now. `Your box
     - Were you able to ping the local address ? 
         - If no, please explain why; otherwise what did you use on your ping6 command ?
 
+### Bonus: Using an ipv6 in ipv4 tunnel
+
+In this bonus part, we are going to enable IPv6 communication in the digitalocean private network between 2 VMs. This is blocked by default and only IPv4 works, so we are going to use a generic ipv6 in ipv4 tunnling (IP protocol 41)
+
 ## Neighbor Discovery protocol
 
 In this section, we are going to create a router advertisement configuration using RADVD program. 
