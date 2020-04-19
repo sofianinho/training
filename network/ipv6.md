@@ -6,7 +6,7 @@ You can find the list of resources [in this link](https://www.notion.so/698c7c26
 
 ## Prerequisites:
 
-For this tutorial, we need to have a working `Linux (preferably debian-based)` virtual machine with 2 network interfaces.
+For this tutorial, we need to have a working `Linux (preferably debian-based, I am using Ubuntu 18.04)` virtual machine with 2 network interfaces.
 
 - If you already have one, ensure that you either one of the following 2 options:
     - You have one interface that is created in `Bridged` mode, and bridged to your host machine's default interface (e.g. your wfi interface)
